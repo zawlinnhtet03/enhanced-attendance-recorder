@@ -1,12 +1,17 @@
+import { headers } from "next/headers";
+import AttendeesSection from "@/components/admin/AttendeesSection";
+
 async function getData() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || ""}/api/admin/users`, {
+  const h = headers();
+  const proto = h.get("x-forwarded-proto") || "https";
+  const host = h.get("x-forwarded-host") || h.get("host") || "localhost:3000";
+  const base = `${proto}://${host}`;
+  const res = await fetch(`${base}/api/admin/users`, {
     cache: "no-store",
   });
   if (!res.ok) throw new Error("Failed to load users");
   return res.json();
 }
-
-import AttendeesSection from "@/components/admin/AttendeesSection";
 
 export default async function DashboardUsersPage() {
   const { completedSessions, pendingSessions, onlyCheckOutParticipants } = await getData();

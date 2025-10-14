@@ -1,8 +1,13 @@
 import BarChart from "@/components/charts/BarChart";
 import DoughnutChart from "@/components/charts/DoughnutChart";
+import { headers } from "next/headers";
 
 async function getAdminUsers() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || ""}/api/admin/users`, { cache: "no-store" });
+  const h = headers();
+  const proto = h.get("x-forwarded-proto") || "https";
+  const host = h.get("x-forwarded-host") || h.get("host") || "localhost:3000";
+  const base = `${proto}://${host}`;
+  const res = await fetch(`${base}/api/admin/users`, { cache: "no-store" });
   if (!res.ok) return { completedSessions: [], pendingSessions: [], onlyCheckOutParticipants: [] };
   return res.json();
 }

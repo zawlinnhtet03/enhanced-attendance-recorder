@@ -1,4 +1,5 @@
 import QRCode from "qrcode";
+import { headers } from "next/headers";
 
 export const dynamic = "force-dynamic";
 
@@ -7,7 +8,10 @@ async function makeDataUrl(text: string) {
 }
 
 export default async function DashboardQrPage() {
-  const base = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const h = headers();
+  const proto = h.get("x-forwarded-proto") || "https";
+  const host = h.get("x-forwarded-host") || h.get("host") || "localhost:3000";
+  const base = `${proto}://${host}`;
   const checkInUrl = `${base}/check-in-form`;
   const checkOutUrl = `${base}/ask-check-in`;
 
