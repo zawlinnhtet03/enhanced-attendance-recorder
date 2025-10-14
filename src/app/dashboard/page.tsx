@@ -1,6 +1,8 @@
 import BarChart from "@/components/charts/BarChart";
 import DoughnutChart from "@/components/charts/DoughnutChart";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { getSession } from "@/lib/auth";
 
 async function getAdminUsers() {
   const h = headers();
@@ -13,6 +15,8 @@ async function getAdminUsers() {
 }
 
 export default async function DashboardHomePage() {
+  const session = await getSession();
+  if (!session?.email) redirect("/login?next=/dashboard");
   const { completedSessions, pendingSessions, onlyCheckOutParticipants } = await getAdminUsers();
   const baseCounts = {
     completed: completedSessions?.length || 0,

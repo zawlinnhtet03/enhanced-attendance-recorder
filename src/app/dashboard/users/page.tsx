@@ -1,5 +1,7 @@
 import { headers } from "next/headers";
 import AttendeesSection from "@/components/admin/AttendeesSection";
+import { redirect } from "next/navigation";
+import { getSession } from "@/lib/auth";
 
 async function getData() {
   const h = headers();
@@ -14,6 +16,8 @@ async function getData() {
 }
 
 export default async function DashboardUsersPage() {
+  const session = await getSession();
+  if (!session?.email) redirect("/login?next=/dashboard/users");
   const { completedSessions, pendingSessions, onlyCheckOutParticipants } = await getData();
   return (
     <section className="space-y-8">

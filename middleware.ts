@@ -16,12 +16,17 @@ async function verify(token: string) {
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  if (!pathname.startsWith("/dashboard")) return NextResponse.next();
+  const isDashboard = pathname.startsWith("/dashboard");
+  const isAdminApi = pathname.startsWith("/api/admin");
+  if (!isDashboard && !isAdminApi) return NextResponse.next();
 
   const token = req.cookies.get(COOKIE_NAME)?.value;
   const session = token ? await verify(token) : null;
 
   if (!session?.email) {
+    if (isAdminApi) {
+      return NextResponse.json({ message: "unauthorized" }, { status: 401 });
+    }
     const url = new URL("/login", req.url);
     url.searchParams.set("next", pathname);
     return NextResponse.redirect(url);
@@ -31,5 +36,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*"],
+  matcher: ["/dashboard/:path*", "/api/admin/:path*"],
 };
