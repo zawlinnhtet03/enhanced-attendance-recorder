@@ -1,5 +1,7 @@
 import { headers } from "next/headers";
 
+export const dynamic = "force-dynamic";
+
 async function getData() {
   const h = headers();
   const proto = h.get("x-forwarded-proto") || "https";

@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     // Completed: sessions having both check_in_time and check_out_time
@@ -41,7 +43,16 @@ export async function GET() {
       include: { sessions: true },
     });
 
-    return NextResponse.json({ completedSessions, pendingSessions, onlyCheckOutParticipants });
+    return NextResponse.json(
+      { completedSessions, pendingSessions, onlyCheckOutParticipants },
+      {
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+          Pragma: "no-cache",
+          Expires: "0",
+        },
+      }
+    );
   } catch (e) {
     console.error(e);
     return NextResponse.json({ message: "server error" }, { status: 500 });
