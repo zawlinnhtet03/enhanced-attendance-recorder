@@ -1,0 +1,48 @@
+// Prisma schema for Neon (PostgreSQL)
+// Mirrors Laravel migrations for participants and participant_sessions
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model FormConfig {
+  id        String   @id @default(cuid())
+  form      String   @unique // CHECK_IN | CHECK_OUT | ONLY_CHECK_OUT
+  fields    Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Participant {
+  id                         Int                  @id @default(autoincrement())
+  first_name                 String
+  last_name                  String
+  email                      String               @unique
+  phone_number               String?              @db.VarChar(20)
+  extra_fields               Json?
+  created_at                 DateTime             @default(now()) @map("created_at")
+  updated_at                 DateTime             @updatedAt @map("updated_at")
+
+  sessions                   ParticipantSession[]
+
+  @@map("participants")
+}
+
+model ParticipantSession {
+  id             Int       @id @default(autoincrement())
+  participant_id Int
+  check_in_time  DateTime?
+  check_out_time DateTime?
+  created_at     DateTime  @default(now()) @map("created_at")
+  updated_at     DateTime  @updatedAt @map("updated_at")
+
+  participant Participant @relation(fields: [participant_id], references: [id], onDelete: Cascade)
+
+  @@index([participant_id])
+  @@map("participant_sessions")
+}
