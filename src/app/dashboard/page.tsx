@@ -1,6 +1,6 @@
 import BarChart from "@/components/charts/BarChart";
 import DoughnutChart from "@/components/charts/DoughnutChart";
-import { headers } from "next/headers";
+import { headers, cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 
@@ -9,7 +9,10 @@ async function getAdminUsers() {
   const proto = h.get("x-forwarded-proto") || "https";
   const host = h.get("x-forwarded-host") || h.get("host") || "localhost:3000";
   const base = `${proto}://${host}`;
-  const res = await fetch(`${base}/api/admin/users`, { cache: "no-store" });
+  const res = await fetch(`${base}/api/admin/users`, { 
+    cache: "no-store",
+    headers: { cookie: cookies().toString() },
+  });
   if (!res.ok) return { completedSessions: [], pendingSessions: [], onlyCheckOutParticipants: [] };
   return res.json();
 }

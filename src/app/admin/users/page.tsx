@@ -1,20 +1,23 @@
 import { headers } from "next/headers";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { getSession } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 async function getData() {
   const h = headers();
-  const proto = h.get("x-forwarded-proto") || "https";
-  const host = h.get("x-forwarded-host") || h.get("host") || "localhost:3000";
-  const base = `${proto}://${host}`;
-  const res = await fetch(`${base}/api/admin/users`, {
+  const res = await fetch(`/api/admin/users`, {
     cache: "no-store",
+    headers: { cookie: cookies().toString() },
   });
   if (!res.ok) throw new Error("Failed to load users");
   return res.json();
 }
 
 export default async function AdminUsersPage() {
+  const session = await getSession();
+  if (!session?.email) redirect("/login?next=/admin/users");
   const { completedSessions, pendingSessions, onlyCheckOutParticipants } = await getData();
   return (
     <section className="space-y-8">

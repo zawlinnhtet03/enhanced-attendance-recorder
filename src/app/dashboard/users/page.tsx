@@ -1,4 +1,4 @@
-import { headers } from "next/headers";
+import { headers, cookies } from "next/headers";
 import AttendeesSection from "@/components/admin/AttendeesSection";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
@@ -10,6 +10,7 @@ async function getData() {
   const base = `${proto}://${host}`;
   const res = await fetch(`${base}/api/admin/users`, {
     cache: "no-store",
+    headers: { cookie: cookies().toString() },
   });
   if (!res.ok) throw new Error("Failed to load users");
   return res.json();
