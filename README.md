@@ -1,6 +1,4 @@
-# Attendance Recorder (Next.js)
-
-A Next.js 14 app to record attendee check-ins and check-outs for a single event, with:
+# Attendance Recorder 
 
 - Admin dashboard for managing dynamic form fields (Check-in, Check-out, Only Check-out)
 - QR code pages for quick access to forms
@@ -15,12 +13,6 @@ A Next.js 14 app to record attendee check-ins and check-outs for a single event,
 - Configure DB URL in `.env` -> `DATABASE_URL`
 - Prisma: `npx prisma generate` and `npx prisma db push`
 - Dev: `npm run dev`
-
-## Deploy
-
-- Build: `npm run build`
-- On Netlify, set build command to `npm run build` and publish directory to `.next`
-- Set env vars in dashboard (e.g., `DATABASE_URL`, optionally `NEXT_PUBLIC_APP_URL`)
 
 ## Tech Stack
 
